@@ -19,9 +19,13 @@ class CustomSensor(CBPiSensor):
         self.kettle_controller : KettleController = cbpi.kettle
         self.kettle_id=self.props.get("Kettle")
         logging.info(self.kettle_id)
-        self.old_value = self.value
+        self.value_old = self.value
+        self.log_data(self.value)
+        self.push_update(self.value)
+
 
     async def run(self):
+        counter = 15 # equal to  ~ 30 seconds with sleep(2)
         while self.running is True:
             try:
                 self.kettle = self.kettle_controller.get_state()
@@ -32,11 +36,20 @@ class CustomSensor(CBPiSensor):
                     if kettle['id'] == self.kettle_id:
                         current_value = int(kettle['target_temp'])
                         self.value = current_value
+#                        logging.info("Counter: {} | Value: {}".format(counter,self.value))
+                        if counter == 0:
+                            if self.value != 0:    
+                                self.log_data(self.value)
+                            counter = 15
+                        else:
+                            if self.value != self.value_old:
+                                self.log_data(self.value)
+                                self.value_old=self.value
+                                counter = 15
 
-                        self.log_data(self.value)  
                         self.push_update(self.value)
-
-            await asyncio.sleep(5)
+            counter -=1
+            await asyncio.sleep(2)
     
     def get_state(self):
         return dict(value=self.value)
