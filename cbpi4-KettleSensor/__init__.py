@@ -7,17 +7,22 @@ from unittest.mock import MagicMock, patch
 import asyncio
 import random
 from cbpi.api import *
+from cbpi.api.config import ConfigType
+from cbpi.api.dataclasses import Kettle, Props, Step
+from cbpi.api.base import CBPiBase
 
 logger = logging.getLogger(__name__)
 
-@parameters([Property.Kettle(label="Kettle")])
-class CustomSensor(CBPiSensor):
+@parameters([Property.Kettle(label="Kettle"),
+             Property.Select(label="Data",options=["TargetTemp","Power"],description="Select kettle data to be monitored")])
+class KettleSensor(CBPiSensor):
     
     def __init__(self, cbpi, id, props):
-        super(CustomSensor, self).__init__(cbpi, id, props)
+        super(KettleSensor, self).__init__(cbpi, id, props)
         self.value = 0
         self.kettle_controller : KettleController = cbpi.kettle
         self.kettle_id=self.props.get("Kettle")
+        self.SensorType=self.props.get("Data","TargetTemp")
         logging.info(self.kettle_id)
         self.value_old = self.value
         self.log_data(self.value)
@@ -34,9 +39,23 @@ class CustomSensor(CBPiSensor):
             if self.kettle is not None:
                 for kettle in self.kettle['data']:
                     if kettle['id'] == self.kettle_id:
-                        current_value = int(kettle['target_temp'])
-                        self.value = current_value
-#                        logging.info("Counter: {} | Value: {}".format(counter,self.value))
+                        if self.SensorType == "TargetTemp":
+                            current_value = int(kettle['target_temp'])
+                            self.value = current_value
+                        else:
+#                            logging.info(kettle['heater'])
+                            heater = kettle['heater']
+                            kettle_heater = self.cbpi.actor.find_by_id(heater)
+#                            logging.info(kettle_heater)
+                            try:
+                                state=kettle_heater.instance.state
+                            except:
+                                state=False
+                            if state == True:
+#                                logging.info("Instance: {}".format(state))
+ #                               logging.info(kettle_heater)
+                                current_value = int(kettle_heater.power)
+                                self.value=current_value
                         if counter == 0:
                             if self.value != 0:    
                                 self.log_data(self.value)
@@ -55,5 +74,5 @@ class CustomSensor(CBPiSensor):
         return dict(value=self.value)
 
 def setup(cbpi):
-    cbpi.plugin.register("TargetTempSensor", CustomSensor)
+    cbpi.plugin.register("KettleSensor", KettleSensor)
     pass

@@ -1,2 +1,2 @@
-include cbpi4-TargetTempSensor/config.yaml
-recursive-include cbpi4-TargetTempSensor/static *
+include cbpi4-KettleSensor/config.yaml
+recursive-include cbpi4-KettleSensor/static *
