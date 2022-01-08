@@ -1,6 +1,7 @@
-# craftbeerpi plugin KettleSensor
+# CraftbeerpIi4 Plugin to monitor Kettle and Fermenter Parameters
 
-KettleSensor extends the graphical output in craftbeerpi4. Your You can add target temperatur and powerlevel to your analytics.
+KettleSensor extends the graphical output in craftbeerpi4. Your You can add target temperatur and powerlevel to your Kettle analytics.
+The Fermentersonsor will add target temperature to your analytics
 
 ## Installation
 
