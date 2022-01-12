@@ -26,3 +26,8 @@ or
 ## Remove plugin from CBPI4
 
 - sudo cbpi remove cbpi4-KettleSensor
+
+###Changelog:
+
+- 12.01.21: (0.0.3) Bug Fixes + Fermenter Status (-1: cooling, 0: no actor active, 1: heating)
+- 03.01.21: (0.0.2) Added FermenterSensor

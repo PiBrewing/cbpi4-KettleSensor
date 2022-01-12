@@ -20,17 +20,15 @@ class KettleSensor(CBPiSensor):
     
     def __init__(self, cbpi, id, props):
         super(KettleSensor, self).__init__(cbpi, id, props)
-        self.value = 0
+        self.value = self.value_old = 0
         self.kettle_controller : KettleController = cbpi.kettle
         self.kettle_id=self.props.get("Kettle")
         self.SensorType=self.props.get("Data","TargetTemp")
-        logging.info(self.kettle_id)
-        self.value_old = self.value
         self.log_data(self.value)
-#        self.push_update(self.value)
 
 
     async def run(self):
+        value=0
         counter = 15 # equal to  ~ 30 seconds with sleep(2)
         while self.running is True:
             try:
@@ -44,32 +42,32 @@ class KettleSensor(CBPiSensor):
                             current_value = int(kettle['target_temp'])
                             value = current_value
                         else:
-#                            logging.info(kettle['heater'])
                             heater = kettle['heater']
                             kettle_heater = self.cbpi.actor.find_by_id(heater)
-#                            logging.info(kettle_heater)
                             try:
                                 state=kettle_heater.instance.state
                             except:
                                 state = False
                             if state == True:
 #                                logging.info("Instance: {}".format(state))
- #                               logging.info(kettle_heater)
-                                current_value = int(kettle_heater.power)
-                                self.value=current_value
+#                                logging.info(kettle_heater)
+                                value = int(kettle_heater.power)
+
                         if counter == 0:
                             if value != 0:
                                 self.value=value
                                 self.log_data(self.value)
+                                self.push_update(self.value)
+                                self.value_old=self.value
                             counter = 15
                         else:
                             if value != self.value_old:
                                 self.value=value
                                 self.log_data(self.value)
+                                self.push_update(self.value)
                                 self.value_old=self.value
                                 counter = 15
-
-            self.push_update(self.value)
+            self.cbpi.ws.send(dict(topic="sensorstate", id=self.id, value=self.value))
             counter -=1
             await asyncio.sleep(2)
     
@@ -83,16 +81,15 @@ class FermenterSensor(CBPiSensor):
     
     def __init__(self, cbpi, id, props):
         super(FermenterSensor, self).__init__(cbpi, id, props)
-        self.value = 0
+        self.value = self.value_old = 0
         self.fermenter_controller : FermentationController = cbpi.fermenter
         self.fermenter_id=self.props.get("Fermenter")
-        self.SensorType="TargetTemp"
-#        logging.info(self.fermenter_id)
-        self.value_old = 0
-#        self.log_data(self.value)
+        self.SensorType=self.props.get("Data","TargetTemp")
+
 
 
     async def run(self):
+        value = 0
         counter = 15 # equal to  ~ 30 seconds with sleep(2)
         while self.running is True:
             try:
@@ -107,27 +104,38 @@ class FermenterSensor(CBPiSensor):
                             value = current_value
                         else:
                             heater = fermenter['heater']
+                            cooler = fermenter['cooler']
                             fermenter_heater = self.cbpi.actor.find_by_id(heater)
+                            fermenter_cooler = self.cbpi.actor.find_by_id(cooler)
                             try:
-                                state=fermenter_heater.instance.state
+                                state_h=fermenter_heater.instance.state
                             except:
-                                state = False
-                            if state == True:
-                                current_value = int(fermenter_heater.power)
-                                self.value=current_value
+                                state_h = False
+                            try:
+                                state_c=fermenter_cooler.instance.state
+                            except:
+                                state_c = False
+                            if state_h == True:
+                                value = 1
+                            elif state_c == True:
+                                value = -1
+                            else:
+                                value = 0
+
                         if counter == 0:
                             self.value=value
                             self.log_data(self.value)
-                            #self.push_update(self.value)
+                            self.push_update(self.value)
+                            self.value_old=self.value
                             counter = 15
                         else:
                             if value != self.value_old:
                                 self.value=value
                                 self.log_data(self.value)
                                 self.value_old=self.value
-                                #self.push_update(self.value)
+                                self.push_update(self.value)
                                 counter = 15
-            self.push_update(self.value)
+            self.cbpi.ws.send(dict(topic="sensorstate", id=self.id, value=self.value))
             counter -=1
             await asyncio.sleep(2)
     
