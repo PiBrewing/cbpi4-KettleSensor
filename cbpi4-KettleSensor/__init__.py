@@ -67,7 +67,8 @@ class KettleSensor(CBPiSensor):
                                 self.push_update(self.value)
                                 self.value_old=self.value
                                 counter = 15
-            self.cbpi.ws.send(dict(topic="sensorstate", id=self.id, value=self.value))
+            self.push_update(selv.value,False)
+            #self.cbpi.ws.send(dict(topic="sensorstate", id=self.id, value=self.value))
             counter -=1
             await asyncio.sleep(2)
     
@@ -135,7 +136,9 @@ class FermenterSensor(CBPiSensor):
                                 self.value_old=self.value
                                 self.push_update(self.value)
                                 counter = 15
-            self.cbpi.ws.send(dict(topic="sensorstate", id=self.id, value=self.value))
+
+            self.push_update(self.value,False)
+            #self.cbpi.ws.send(dict(topic="sensorstate", id=self.id, value=self.value))
             counter -=1
             await asyncio.sleep(2)
     
