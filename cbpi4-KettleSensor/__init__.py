@@ -67,7 +67,7 @@ class KettleSensor(CBPiSensor):
                                 self.push_update(self.value)
                                 self.value_old=self.value
                                 counter = 15
-            self.push_update(selv.value,False)
+            self.push_update(self.value,False)
             #self.cbpi.ws.send(dict(topic="sensorstate", id=self.id, value=self.value))
             counter -=1
             await asyncio.sleep(2)

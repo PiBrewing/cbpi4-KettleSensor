@@ -29,6 +29,7 @@ or
 
 ###Changelog:
 
+- 27.01.22: (0.0.5) Bug fixed for kettle sensor
 - 16.01.22: (0.0.4) Adaption for cbpi 4.0.1.2
 - 12.01.22: (0.0.3) Bug Fixes + Fermenter Status (-1: cooling, 0: no actor active, 1: heating)
 - 03.01.21: (0.0.2) Added FermenterSensor
