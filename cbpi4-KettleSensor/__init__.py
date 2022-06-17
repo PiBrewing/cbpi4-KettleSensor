@@ -101,7 +101,7 @@ class FermenterSensor(CBPiSensor):
                 for fermenter in self.fermenter['data']:
                     if fermenter['id'] == self.fermenter_id:
                         if self.SensorType == "TargetTemp":
-                            current_value = int(fermenter['target_temp'])
+                            current_value = float(fermenter['target_temp'])
                             value = current_value
                         else:
                             heater = fermenter['heater']

@@ -7,7 +7,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name='cbpi4-KettleSensor',
-      version='0.0.5',
+      version='0.0.6',
       description='CraftBeerPi4 Plugin to add Sensor parameters for your Kettle and Fermenter',
       author='Alexander Vollkopf',
       author_email='avollkopf@web.de',
