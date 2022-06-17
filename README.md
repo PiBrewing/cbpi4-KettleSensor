@@ -19,14 +19,6 @@ or
 
 - sudo pip3 install --upgrade https://github.com/avollkopf/cbpi4-KettleSensor/archive/main.zip
 
-## Add plugin to CBPi4
-
-- sudo cbpi add cbpi4-KettleSensor
-
-## Remove plugin from CBPI4
-
-- sudo cbpi remove cbpi4-KettleSensor
-
 ### Changelog:
 
 - 17.06.22: (0.0.6) Fix to transfer also float values for fermenter target temp (required for ramp to temp step)
