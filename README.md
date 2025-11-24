@@ -21,6 +21,7 @@ or
 
 ### Changelog:
 
+- 24.11.25: (0.1.0) Add pyproject.tonl to support pip 25.3+
 - 17.06.22: (0.0.6) Fix to transfer also float values for fermenter target temp (required for ramp to temp step)
 - 27.01.22: (0.0.5) Bug fixed for kettle sensor
 - 16.01.22: (0.0.4) Adaption for cbpi 4.0.1.2
